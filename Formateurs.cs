@@ -64,7 +64,7 @@ namespace Formation
 
             foreach (Formateur formateur in GlobalData.Formateurs)
             {
-                dataGridView1.Rows.Add(formateur.idFormateur, formateur.nom, formateur.prenom, formateur.tel, formateur.salaire);
+                dataGridView1.Rows.Add(formateur.GetIdFormateur(), formateur.GetNom(), formateur.GetPrenom(), formateur.GetTel(), formateur.GetSalaire());
             }
         }
 
@@ -79,7 +79,7 @@ namespace Formation
 
                     foreach (Formateur formateur in GlobalData.Formateurs)
                     {
-                        if (formateur.idFormateur == iDFormateur)
+                        if (formateur.GetIdFormateur() == iDFormateur)
                         {
                             formateur.supprimerFormateur(GlobalData.Formateurs);
                             dataGridView1.Rows.RemoveAt(e.RowIndex);

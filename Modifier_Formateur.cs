@@ -17,17 +17,18 @@ namespace Formation
         {
             InitializeComponent();
             this.iDFormateur = idFormateur;
-            foreach (Formateur formateur in GlobalData.Formateurs)
+            Formateur formateur = GlobalData.Formateurs.FirstOrDefault(f => f.GetIdFormateur() == iDFormateur);
+            if (formateur != null)
             {
-                if (formateur.idFormateur == iDFormateur)
-                {
-
-                    mdf_for_nom.Text = formateur.nom;
-                    mdf_for_prenom.Text = formateur.prenom;
-                    mdf_for_tel.Text = formateur.tel;
-                    mdf_for_salaire.Text = formateur.salaire.ToString();
-                    break;
-                }
+                mdf_for_nom.Text = formateur.GetNom();
+                mdf_for_prenom.Text = formateur.GetPrenom();
+                mdf_for_tel.Text = formateur.GetTel();
+                mdf_for_salaire.Text = formateur.GetSalaire().ToString();
+            }
+            else
+            {
+                MessageBox.Show("Formateur non trouvé");
+                this.Close();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Formation
 
         private void btn_modifier_formateur_Click(object sender, EventArgs e)
         {
-            Formateur formateurRecherche = GlobalData.Formateurs.FirstOrDefault(formateur => formateur.idFormateur == this.iDFormateur);
+            Formateur formateurRecherche = GlobalData.Formateurs.FirstOrDefault(formateur => formateur.GetIdFormateur() == this.iDFormateur);
 
 
 
@@ -48,11 +49,9 @@ namespace Formation
                 string prenom = mdf_for_prenom.Text;
                 string tel = mdf_for_tel.Text;
                 double salaire = Convert.ToDouble(mdf_for_salaire.Text);
-
-                formateurRecherche.nom = nom;
-                formateurRecherche.prenom = prenom;
-                formateurRecherche.tel = tel;
-                formateurRecherche.salaire = salaire;
+                Formateur f=new Formateur(this.iDFormateur,nom, prenom,tel, salaire);
+                formateurRecherche.modifierFormateur(f);
+                
 
                 MessageBox.Show("Formateur modifié avec succès");
                 this.Hide();
