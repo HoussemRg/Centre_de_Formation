@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace Formation
 {
@@ -15,8 +17,14 @@ namespace Formation
         public Formateurs()
         {
             InitializeComponent();
+            InitializeDataGridViewColumns();
+            LoadFormateursData();
+        }
+
+        private void InitializeDataGridViewColumns()
+        {
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
-            idColumn.DataPropertyName = "idFormateur";
+            idColumn.DataPropertyName = "Id";
             idColumn.HeaderText = "ID";
             idColumn.Name = "ID";
             idColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -49,22 +57,34 @@ namespace Formation
             salaireColumn.Name = "Salaire";
             salaireColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns.Add(salaireColumn);
+
             DataGridViewButtonColumn deleteButtonColumn = new DataGridViewButtonColumn();
             deleteButtonColumn.HeaderText = "Supprimer";
             deleteButtonColumn.Text = "Supprimer";
             deleteButtonColumn.Name = "Supprimer";
             deleteButtonColumn.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(deleteButtonColumn);
+
             DataGridViewButtonColumn updateButtonColumn = new DataGridViewButtonColumn();
             updateButtonColumn.HeaderText = "Modifier";
             updateButtonColumn.Text = "Modifier";
             updateButtonColumn.Name = "Modifier";
             updateButtonColumn.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(updateButtonColumn);
+        }
 
-            foreach (Formateur formateur in GlobalData.Formateurs)
+        private void LoadFormateursData()
+        {
+            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=centre_formation;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+            string query = "SELECT Id, nom, prenom, tel, salaire FROM formateur";
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                dataGridView1.Rows.Add(formateur.GetIdFormateur(), formateur.GetNom(), formateur.GetPrenom(), formateur.GetTel(), formateur.GetSalaire());
+                SqlDataAdapter adapter = new SqlDataAdapter(query, sqlConnection);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                dataGridView1.DataSource = dataTable;
             }
         }
 
