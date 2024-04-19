@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
+using CentreFormation;
 
 namespace Formation
 {
@@ -71,6 +72,10 @@ namespace Formation
             updateButtonColumn.Name = "Modifier";
             updateButtonColumn.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(updateButtonColumn);
+            foreach (Formateur formateur in GlobalData.Formateurs)
+            {
+                dataGridView1.Rows.Add(formateur.GetIdFormateur(), formateur.GetNom(), formateur.GetPrenom(), formateur.GetTel(), formateur.GetSalaire());
+            }
         }
 
         private void LoadFormateursData()
@@ -84,7 +89,7 @@ namespace Formation
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
 
-                dataGridView1.DataSource = dataTable;
+                //dataGridView1.DataSource = dataTable;
             }
         }
 
@@ -101,7 +106,10 @@ namespace Formation
                     {
                         if (formateur.GetIdFormateur() == iDFormateur)
                         {
-                            formateur.supprimerFormateur(GlobalData.Formateurs);
+                            FormateurDAO formateurDAO = new FormateurDAO();
+
+                            formateurDAO.supprimerFormateur(formateur);
+                            
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
                             break;
                         }

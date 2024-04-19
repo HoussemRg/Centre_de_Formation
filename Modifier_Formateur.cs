@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CentreFormation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -50,8 +51,10 @@ namespace Formation
                 string tel = mdf_for_tel.Text;
                 double salaire = Convert.ToDouble(mdf_for_salaire.Text);
                 Formateur f=new Formateur(this.iDFormateur,nom, prenom,tel, salaire);
-                formateurRecherche.modifierFormateur(f);
+                FormateurDAO formateurDAO = new FormateurDAO();
                 
+                formateurDAO.modifierFormateur(formateurRecherche,f);
+
 
                 MessageBox.Show("Formateur modifié avec succès");
                 this.Hide();

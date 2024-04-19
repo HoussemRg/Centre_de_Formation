@@ -43,8 +43,8 @@ public class Personne {
         tel = value;
     }
 
-    protected string nom { get; set; }
-    protected string prenom { get; set; }
-    protected string tel { get; set; }
+    protected string nom;
+    protected string prenom;
+    protected string tel;
 
 }

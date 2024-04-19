@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CentreFormation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,8 +25,10 @@ namespace Formation
             string prenom = prenom_for_textbox.Text;
             string tel = tel_for_textbox.Text;
             double salaire = Convert.ToDouble(salaire_form_textbox.Text);
+            FormateurDAO formateurDAO = new FormateurDAO();
+            
             Formateur f = new Formateur(idForm, nom, prenom, tel, salaire);
-            f.ajouterFormateur(GlobalData.Formateurs);
+            formateurDAO.ajouterFormateur(f);
             MessageBox.Show("Formateur Ajouté avec succées");
             this.Hide();
             Formateurs form = new Formateurs();

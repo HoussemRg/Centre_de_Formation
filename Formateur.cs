@@ -12,8 +12,8 @@ public class Formateur : Personne {
         this.salaire = salaire;
     }
 
-    private int idFormateur { get; set; }
-    private double salaire { get; set; }
+    private int idFormateur;
+    private double salaire;
 
    
     public int GetIdFormateur()
@@ -39,23 +39,6 @@ public class Formateur : Personne {
         salaire = value;
     }
 
-    public void ajouterFormateur(List<Formateur> formateurs)
-    {
-        formateurs.Add(this);
-    }
-
-    public void supprimerFormateur(List<Formateur> formateurs)
-    {
-        formateurs.Remove(this);
-    }
-
-    public void modifierFormateur(Formateur formateur)
-    {
-        this.idFormateur = formateur.GetIdFormateur();
-        this.nom = formateur.GetNom();
-        this.prenom=formateur.GetPrenom();
-        this.tel = formateur.GetTel();
-        this.salaire = formateur.GetSalaire();
-    }
+    
 
 }
