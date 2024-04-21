@@ -60,7 +60,9 @@ namespace CentreFormation
                 if (salle != null && formation != null && formateur != null)
                 {
                     Session s = new Session(idSession, duree, salle, selectedDate, formateur, formation);
-                    s.creerSession(GlobalData.Sessions);
+                    SessionDAO sessionDAO = new SessionDAO();
+                    sessionDAO.creerSession(s);
+
                     MessageBox.Show("Session Ajoutée avec succès");
                     this.Hide();
                     Sessions sess = new Sessions();
@@ -99,6 +101,11 @@ namespace CentreFormation
             this.Hide();
             Sessions sess = new Sessions();
             sess.Show();
+        }
+
+        private void Ajout_Session_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

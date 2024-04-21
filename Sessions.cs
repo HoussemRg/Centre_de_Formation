@@ -89,7 +89,9 @@ namespace CentreFormation
                     {
                         if (s.getIdSession() == iDSession)
                         {
-                            s.annulerSession(GlobalData.Sessions);
+                            SessionDAO sessionDAO = new SessionDAO();
+                            sessionDAO.annulerSession(s);
+                            
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
                             break;
                         }
@@ -99,10 +101,10 @@ namespace CentreFormation
             }
             else if (dataGridView1.Columns[e.ColumnIndex].Name == "Modifier")
             {
-                int iDParticipant = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
+                int iDSession = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
                 this.Hide();
-                Modifier_Participant mf = new Modifier_Participant(iDParticipant);
-                mf.Show();
+                Modifier_Session ms = new Modifier_Session(iDSession);
+                ms.Show();
             }
         }
 

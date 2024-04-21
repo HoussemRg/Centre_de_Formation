@@ -76,7 +76,9 @@ namespace CentreFormation
                     {
                         if (f.getIdFormation() == iDFormation)
                         {
-                            f.supprimerFormation(GlobalData.Formations);
+                            FormationDAO formationDAO = new FormationDAO();
+                            formationDAO.supprimerFormation(f);
+                            
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
                             break;
                         }

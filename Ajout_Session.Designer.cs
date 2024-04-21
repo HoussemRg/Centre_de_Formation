@@ -194,6 +194,7 @@
             Controls.Add(label1);
             Name = "Ajout_Session";
             Text = "Ajout_Session";
+            Load += Ajout_Session_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

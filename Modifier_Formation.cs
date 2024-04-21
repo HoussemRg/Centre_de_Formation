@@ -74,7 +74,8 @@ namespace CentreFormation
                     if (selectedCourse != null)
                     {
                         Formatione f = new Formatione(this.iDFormation, nom, prix, selectedCourse);
-                        formationRecherche.modifierFormation(f);
+                        FormationDAO formationDAO = new FormationDAO();
+                        formationDAO.modifierFormation(formationRecherche,f);
                         MessageBox.Show("Formation Modifié avec succès");
                         this.Hide();
                         Formations form = new Formations();

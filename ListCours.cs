@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CentreFormation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -54,7 +55,8 @@ namespace Formation
                     {
                         if (c.getIdCours() == iDCours)
                         {
-                            c.supprimerCours(GlobalData.Cours);
+                            CoursDAO coursDAO = new CoursDAO();
+                            coursDAO.ajouterCours(c);
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
                             break;
                         }

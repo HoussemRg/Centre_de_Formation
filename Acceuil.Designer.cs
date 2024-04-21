@@ -42,6 +42,7 @@
             label6 = new Label();
             btn_list_salles = new Button();
             label7 = new Label();
+            btn_exit = new Button();
             SuspendLayout();
             // 
             // btn_formateurs
@@ -132,7 +133,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Showcard Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(453, 42);
+            label5.Location = new Point(443, 9);
             label5.Name = "label5";
             label5.Size = new Size(348, 35);
             label5.TabIndex = 8;
@@ -180,11 +181,25 @@
             label7.TabIndex = 12;
             label7.Text = "Salles";
             // 
+            // btn_exit
+            // 
+            btn_exit.BackColor = Color.Red;
+            btn_exit.Font = new Font("Showcard Gothic", 18F, FontStyle.Bold);
+            btn_exit.ForeColor = SystemColors.ButtonFace;
+            btn_exit.Location = new Point(1016, 9);
+            btn_exit.Name = "btn_exit";
+            btn_exit.Size = new Size(191, 57);
+            btn_exit.TabIndex = 13;
+            btn_exit.Text = "EXIT";
+            btn_exit.UseVisualStyleBackColor = false;
+            btn_exit.Click += btn_exit_Click;
+            // 
             // Acceuil
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1239, 489);
+            Controls.Add(btn_exit);
             Controls.Add(label7);
             Controls.Add(btn_list_salles);
             Controls.Add(label6);
@@ -219,5 +234,6 @@
         private Label label6;
         private Button btn_list_salles;
         private Label label7;
+        private Button btn_exit;
     }
 }

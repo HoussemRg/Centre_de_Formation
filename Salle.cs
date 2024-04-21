@@ -11,9 +11,9 @@ public class Salle {
         this.depatement = d;
     }
 
-    private int numSalle { get; set; }
+    private int numSalle;
 
-    private string depatement { get; set; }
+    private string depatement;
 
     public int getNumSalle()
     {
@@ -36,9 +36,6 @@ public class Salle {
     {
         depatement = d;
     }
-    public void ajouterSalle(List<Salle> salles)
-    {
-        salles.Add(this);
-    }
+   
 
 }

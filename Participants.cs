@@ -96,7 +96,9 @@ namespace CentreFormation
                     {
                         if (p.getIdParticipant() == iDParticipant)
                         {
-                            p.supprimerParticipant(GlobalData.Participants);
+                            ParticipantDAO participantDAO = new ParticipantDAO();
+                            participantDAO.supprimerParticipant(p);
+                            
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
                             break;
                         }
@@ -122,7 +124,8 @@ namespace CentreFormation
                     {
                         if (p.getIdParticipant() == iDParticipant)
                         {
-                            p.payerFormation();
+                            ParticipantDAO participantDAO = new ParticipantDAO();
+                            participantDAO.payerFormation(p);
                             dataGridView1.Rows[e.RowIndex].Cells["etat"].Value = "Payé";
 
                             break;

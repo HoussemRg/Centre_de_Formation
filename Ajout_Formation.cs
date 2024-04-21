@@ -46,7 +46,9 @@ namespace CentreFormation
                 if (selectedCourse != null)
                 {
                     Formatione f = new Formatione(idFormation, nom, prix, selectedCourse);
-                    f.ajouterFormation(GlobalData.Formations);
+                    FormationDAO formationDAO = new FormationDAO();
+                    formationDAO.ajouterFormation(f);
+                    
                     MessageBox.Show("Formation Ajoutée avec succès");
                     this.Hide();
                     Formations form = new Formations();

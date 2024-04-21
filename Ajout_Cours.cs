@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CentreFormation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,7 +24,9 @@ namespace Formation
             string nom = nom_cours_textbox.Text;
 
             Cours c = new Cours(idCours, nom);
-            c.ajouterCours(GlobalData.Cours);
+            CoursDAO coursDAO = new CoursDAO();
+            coursDAO.ajouterCours(c);
+            
             MessageBox.Show("Cours Ajouté avec succées");
             this.Hide();
             ListCours cours = new ListCours();

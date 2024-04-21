@@ -7,21 +7,21 @@ using System.Text;
  public class Formatione
     {
 
-        public Formatione(int id, string nom, double prix, Cours c)
-        {
+    public Formatione(int id, string nom, double prix, Cours c)
+    {
             idFormation = id;
             nomFormation = nom;
             prixFormation = prix;
             cours = c;
-        }
+    }
 
-        private int idFormation { get; set; }
+    private int idFormation;
 
-        private string nomFormation { get; set; }
+    private string nomFormation;
 
-        private double prixFormation { get; set; }
+    private double prixFormation;
 
-        private Cours cours { get; set; }
+    private Cours cours;
 
         public int getIdFormation()
         {
@@ -68,22 +68,6 @@ using System.Text;
         {
             cours = value;
         }
-    public void ajouterFormation(List<Formatione> formations)
-        {
-            formations.Add(this);
-        }
-
-        public void supprimerFormation(List<Formatione> formations)
-        {
-            formations.Remove(this);
-        }
-
-        public void modifierFormation(Formatione f)
-        {
-            idFormation= f.getIdFormation();
-            nomFormation= f.getNomFormation();
-            prixFormation= f.getPrixFormation();
-            cours = f.getCours();
-        }
+    
 
     }

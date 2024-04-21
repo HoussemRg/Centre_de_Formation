@@ -37,14 +37,6 @@ public class Cours {
         idCours = id;
     }
 
-    public void ajouterCours(List<Cours> cours) {
-        cours.Add(this);
-    }
-
     
-
-    public void supprimerCours(List<Cours> cours) {
-        cours.Remove(this);
-    }
 
 }

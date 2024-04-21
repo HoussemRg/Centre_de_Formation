@@ -67,6 +67,10 @@ public class Session {
     {
         return participants;
     }
+    public void setParticipants(List<Participant> participants)
+    {
+        this.participants = participants;
+    }
 
     public Formateur getFormateur()
     {
@@ -87,29 +91,6 @@ public class Session {
     {
         this.formation = formation;
     }
-    public void affecterParticipant(Participant participant)
-    {
-        this.participants.Add(participant);
-    }
     
-
-    public void creerSession(List<Session> sessions)
-    {
-        sessions.Add(this);
-    }
-
-    public void annulerSession(List<Session> sessions) {
-        sessions.Remove(this);
-    }
-
-    public void modifierSession(Session s) {
-        this.idSession = s.idSession;
-        this.duree = s.duree;
-        this.formateur=s.formateur;
-        this.formation=s.formation;
-        this.dateDebut=s.dateDebut;
-        this.salle=s.salle;
-        this.participants=s.participants;
-    }
 
 }

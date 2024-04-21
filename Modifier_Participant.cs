@@ -45,9 +45,8 @@ namespace CentreFormation
                 string tel = tel_textbox.Text;
 
                 Participant p = new Participant(this.iDParticipant, nom, prenom, tel, participantRecherche.getEtatPayment());
-                participantRecherche.modifierParticipant(p);
-
-
+                ParticipantDAO participantDAO = new ParticipantDAO();
+                participantDAO.modifierParticipant(participantRecherche,p);
                 MessageBox.Show("Participant modifié avec succès");
                 this.Hide();
                 Participants part = new Participants();

@@ -24,7 +24,9 @@ namespace CentreFormation
             string departement = departement_textbox.Text;
 
             Salle s = new Salle(numSalle, departement);
-            s.ajouterSalle(GlobalData.Salles);
+            SalleDAO sdao = new SalleDAO();
+            sdao.ajouterSalle(s);
+            
             MessageBox.Show("Salle Ajouté avec succées");
             this.Hide();
             Salles salles = new Salles();

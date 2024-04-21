@@ -26,7 +26,8 @@ namespace CentreFormation
             string tel = tel_textbox.Text;
 
             Participant p = new Participant(idPart, nom, prenom, tel, false);
-            p.ajouterParticipant(GlobalData.Participants);
+            ParticipantDAO participantDAO = new ParticipantDAO();
+            participantDAO.ajouterParticipant(p);
             MessageBox.Show("Participant Ajouté avec succées");
             this.Hide();
             Participants part = new Participants();
