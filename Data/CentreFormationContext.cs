@@ -19,7 +19,7 @@ namespace CentreFormation.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=formation;Integrated Security=True;TrustServerCertificate=True");
+            optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=formation;Integrated Security=True;TrustServerCertificate=True");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
