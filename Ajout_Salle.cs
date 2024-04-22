@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,24 +14,36 @@ namespace CentreFormation
 {
     public partial class Ajout_Salle : Form
     {
-        public Ajout_Salle()
+        private readonly CentreFormationContext _context;
+        public Ajout_Salle(CentreFormationContext context)
         {
             InitializeComponent();
+            _context = context;
         }
 
         private void ajouter_salle_Click(object sender, EventArgs e)
         {
-            int numSalle = Convert.ToInt32(numsalle_textbox.Text);
-            string departement = departement_textbox.Text;
+            try
+            {
+                
+                string departement = departement_textbox.Text;
+                Salle salle = new Salle {depatement=departement};
+                var salleDAO = new SalleDAO(_context);
+                salleDAO.ajouterSalle(salle);
+                MessageBox.Show("Salle Ajouté avec succées");
+                this.Hide();
+                Salles salles = new Salles();
+                salles.Show();
 
-            Salle s = new Salle(numSalle, departement);
-            SalleDAO sdao = new SalleDAO();
-            sdao.ajouterSalle(s);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'ajout de la salle : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             
-            MessageBox.Show("Salle Ajouté avec succées");
-            this.Hide();
-            Salles salles = new Salles();
-            salles.Show();
+
+            
+            
         }
 
         private void btn_ajout_salle_back_Click(object sender, EventArgs e)

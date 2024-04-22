@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -14,29 +15,31 @@ namespace CentreFormation
 {
     public partial class Modifier_Session : Form
     {
+        private readonly CentreFormationContext _context;
         string selectedFormateur = "";
         string selectedSalle = "";
         DateTime selectedDate;
         private int iDSession;
-        public Modifier_Session(int idSession)
+        public Modifier_Session(CentreFormationContext context, int idSession)
         {
             InitializeComponent();
+            _context = context;
             this.iDSession = idSession;
-            foreach (Formateur f in GlobalData.Formateurs)
+            foreach (Formateur f in _context.Formateurs)
             {
-                comboBox1.Items.Add(f.GetNom() + " " + f.GetPrenom());
+                comboBox1.Items.Add(f.nom + " " + f.prenom);
             }
-            foreach (Salle s in GlobalData.Salles)
+            foreach (Salle s in _context.salles)
             {
-                comboBox2.Items.Add(s.getNumSalle());
+                comboBox2.Items.Add(s.numSalle);
             }
-            Session session = GlobalData.Sessions.FirstOrDefault(s => s.getIdSession() == iDSession);
+            Session session = _context.sessions.FirstOrDefault(s => s.idSession == iDSession);
             if (session != null)
             {
-                duree_textbox.Text = session.getDuree().ToString();
-                comboBox1.SelectedItem = session.getFormateur().GetNom() + " " + session.getFormateur().GetPrenom();
-                comboBox2.SelectedItem = session.getSalle().getNumSalle();
-                dateTimePicker1.Value = session.getDateDebut();
+                duree_textbox.Text = session.duree.ToString();
+                comboBox1.SelectedItem = session.formateur.nom + " " + session.formateur.prenom;
+                comboBox2.SelectedItem = session.salle.numSalle;
+                dateTimePicker1.Value = session.dateDebut;
             }
             else
             {
@@ -67,7 +70,7 @@ namespace CentreFormation
 
         private void mdf_session_Click(object sender, EventArgs e)
         {
-            Session sessionRecherche = GlobalData.Sessions.FirstOrDefault(s => s.getIdSession() == this.iDSession);
+            Session sessionRecherche = _context.sessions.FirstOrDefault(s => s.idSession == this.iDSession);
 
 
 
@@ -93,16 +96,16 @@ namespace CentreFormation
                 }
                 else
                 {
-                    Formateur formateur = GlobalData.Formateurs.FirstOrDefault(f => f.GetNom() + " " + f.GetPrenom() == selectedFormateur);
-                    Salle salle = GlobalData.Salles.FirstOrDefault(s => s.getNumSalle().ToString() == selectedSalle);
+                    Formateur formateur = _context.Formateurs.FirstOrDefault(f => f.nom + " " + f.prenom == selectedFormateur);
+                    Salle salle = _context.salles.FirstOrDefault(s => s.numSalle.ToString() == selectedSalle);
 
                     if (formateur != null || salle != null)
                     {
 
-                        Session session = new Session(this.iDSession, duree, salle, selectedDate, formateur, sessionRecherche.getFormation());
-                        SessionDAO sessionDAO = new SessionDAO();
+                        Session session = new Session(this.iDSession, duree, salle, selectedDate, formateur, sessionRecherche.formation);
+                        SessionDAO sessionDAO = new SessionDAO(_context);
                         sessionDAO.modifierSession(sessionRecherche, session);
-                        MessageBox.Show("Formation Modifié avec succès");
+                        MessageBox.Show("Session Modifié avec succès");
                         this.Hide();
                         Sessions sess = new Sessions();
                         sess.Show();

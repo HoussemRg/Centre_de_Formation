@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,16 +15,18 @@ namespace CentreFormation
     public partial class Modifier_Participant : Form
     {
         private int iDParticipant;
-        public Modifier_Participant(int idParticipant)
+        private readonly CentreFormationContext _context;
+        public Modifier_Participant(CentreFormationContext context, int idParticipant)
         {
             InitializeComponent();
+            _context = context;
             this.iDParticipant = idParticipant;
-            Participant p = GlobalData.Participants.FirstOrDefault(p => p.getIdParticipant() == iDParticipant);
+            Participant p = _context.Participants.FirstOrDefault(p => p.idParticipant == iDParticipant);
             if (p != null)
             {
-                nom_textbox.Text = p.GetNom();
-                prenom_textbox.Text = p.GetPrenom();
-                tel_textbox.Text = p.GetTel();
+                nom_textbox.Text = p.nom;
+                prenom_textbox.Text = p.prenom;
+                tel_textbox.Text = p.tel;
             }
             else
             {
@@ -34,19 +37,16 @@ namespace CentreFormation
 
         private void modifier_btn_Click(object sender, EventArgs e)
         {
-            Participant participantRecherche = GlobalData.Participants.FirstOrDefault(p => p.getIdParticipant() == this.iDParticipant);
-
-
-
+            Participant participantRecherche = _context.Participants.FirstOrDefault(p => p.idParticipant == this.iDParticipant);
             if (participantRecherche != null)
             {
                 string nom = nom_textbox.Text;
                 string prenom = prenom_textbox.Text;
                 string tel = tel_textbox.Text;
 
-                Participant p = new Participant(this.iDParticipant, nom, prenom, tel, participantRecherche.getEtatPayment());
-                ParticipantDAO participantDAO = new ParticipantDAO();
-                participantDAO.modifierParticipant(participantRecherche,p);
+                Participant p = new Participant(this.iDParticipant, nom, prenom, tel, participantRecherche.etatPayment);
+                ParticipantDAO participantDAO = new ParticipantDAO(_context);
+                participantDAO.modifierParticipant(participantRecherche, p);
                 MessageBox.Show("Participant modifié avec succès");
                 this.Hide();
                 Participants part = new Participants();

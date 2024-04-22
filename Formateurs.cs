@@ -10,15 +10,18 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
 using CentreFormation;
+using CentreFormation.Data;
 
 namespace Formation
 {
     public partial class Formateurs : Form
     {
+        private readonly CentreFormationContext _context;
         public Formateurs()
         {
             InitializeComponent();
             InitializeDataGridViewColumns();
+            _context = new CentreFormationContext();
             LoadFormateursData();
         }
 
@@ -72,24 +75,15 @@ namespace Formation
             updateButtonColumn.Name = "Modifier";
             updateButtonColumn.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(updateButtonColumn);
-            foreach (Formateur formateur in GlobalData.Formateurs)
-            {
-                dataGridView1.Rows.Add(formateur.GetIdFormateur(), formateur.GetNom(), formateur.GetPrenom(), formateur.GetTel(), formateur.GetSalaire());
-            }
+            
         }
 
         private void LoadFormateursData()
         {
-            string connectionString = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=centre_formation;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
-            string query = "SELECT Id, nom, prenom, tel, salaire FROM formateur";
-
-            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            var formateurs = _context.Formateurs.ToList();
+            foreach (var formateur in formateurs)
             {
-                SqlDataAdapter adapter = new SqlDataAdapter(query, sqlConnection);
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
-
-                //dataGridView1.DataSource = dataTable;
+                dataGridView1.Rows.Add(formateur.idFormateur, formateur.nom, formateur.prenom, formateur.tel, formateur.salaire);
             }
         }
 
@@ -98,20 +92,17 @@ namespace Formation
             if (dataGridView1.Columns[e.ColumnIndex].Name == "Supprimer")
             {
                 DialogResult result = MessageBox.Show("Êtes-vous sûr de vouloir supprimer ce formateur ?", "Confirmation", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
                 {
-                    int iDFormateur = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
+                    int idFormateur = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
 
-                    foreach (Formateur formateur in GlobalData.Formateurs)
+                    using (var context = new CentreFormationContext())
                     {
-                        if (formateur.GetIdFormateur() == iDFormateur)
+                        var formateurDAO = new FormateurDAO(context);
+                        var formateur = context.Formateurs.Find(idFormateur);
+                        if (formateur != null)
                         {
-                            FormateurDAO formateurDAO = new FormateurDAO();
-
-                            formateurDAO.supprimerFormateur(formateur);
-                            
+                            formateurDAO.SupprimerFormateur(formateur);
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
-                            break;
                         }
                     }
                 }
@@ -121,7 +112,7 @@ namespace Formation
             {
                 int iDFormateur = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
                 this.Hide();
-                Modifier_Formateur mf = new Modifier_Formateur(iDFormateur);
+                Modifier_Formateur mf = new Modifier_Formateur(_context,iDFormateur);
                 mf.Show();
             }
         }
@@ -135,9 +126,18 @@ namespace Formation
 
         private void ajout_formateur_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            Ajout_Formateur af = new Ajout_Formateur();
-            af.Show();
+            try
+            {
+                // Création d'une nouvelle instance de Ajout_Formateur en passant le contexte en paramètre
+                this.Hide();
+                Ajout_Formateur af = new Ajout_Formateur(_context);
+                af.Show();
+            }
+            catch (Exception ex)
+            {
+                // Gestion des erreurs
+                MessageBox.Show($"Une erreur s'est produite : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         

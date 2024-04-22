@@ -1,4 +1,6 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,33 +11,71 @@ namespace CentreFormation
 {
     internal class SessionDAO
     {
-        public SessionDAO() { }
-        public void affecterParticipant(Session s, Participant participant)
+        private readonly CentreFormationContext _context;
+        public SessionDAO(CentreFormationContext context) 
         {
-            List<Participant> newParticipants = s.getParticipants();
-            newParticipants.Add(participant);
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
+        /*public void affecterParticipant(Session s, Participant participant)
+        {
+            ICollection<Participant> newParticipants = s.participants;
+            newParticipants.Add(participant);
+        }*/
 
 
         public void creerSession(Session session)
         {
-            GlobalData.Sessions.Add(session);
+            try
+            {
+                _context.sessions.Add(session);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'ajout de la session : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
         }
 
         public void annulerSession(Session session)
         {
-            GlobalData.Sessions.Remove(session);
+            try
+            {
+                _context.sessions.Remove(session);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"Erreur lors de la suppression de la formation : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
         }
 
         public void modifierSession(Session s,Session newSession)
         {
-            s.setIdSession(newSession.getIdSession());
-            s.setDuree(newSession.getDuree());
-            s.setFormateur(newSession.getFormateur());
-            s.setFormation(newSession.getFormation());
-            s.setDateDebut(newSession.getDateDebut());
-            s.setSalle(newSession.getSalle());
-            s.setParticipants(newSession.getParticipants());
+            try
+            {
+                var sessionToUpdate = _context.sessions.Find(s.idSession);
+                if (sessionToUpdate != null)
+                {
+                    sessionToUpdate.duree = newSession.duree;
+                    sessionToUpdate.formateur = newSession.formateur;
+                    sessionToUpdate.formation = newSession.formation;
+                    sessionToUpdate.salle = newSession.salle;
+                    sessionToUpdate.dateDebut = newSession.dateDebut;
+                    sessionToUpdate.participants = newSession.participants;
+
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de la modification de la formation : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+
+          
         }
     }
 }

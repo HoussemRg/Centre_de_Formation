@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +10,61 @@ namespace CentreFormation
 {
     public class FormateurDAO
     {
-        public FormateurDAO() { }
-        public void ajouterFormateur(Formateur f)
+        private readonly CentreFormationContext _context;
+
+        
+        public FormateurDAO(CentreFormationContext context)
         {
-            GlobalData.Formateurs.Add(f);
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public void supprimerFormateur(Formateur f)
+        public void AjouterFormateur(Formateur formateur)
         {
-            GlobalData.Formateurs.Remove(f);
+            try
+            {
+                _context.Formateurs.Add(formateur);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"Erreur lors de l'ajout du formateur : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw; 
+            }
         }
-        public void modifierFormateur(Formateur formateur,Formateur nouveauFormateur)
+        public void SupprimerFormateur(Formateur formateur)
         {
-            formateur.SetIdFormateur(nouveauFormateur.GetIdFormateur());
-            formateur.SetNom(nouveauFormateur.GetNom());
-            formateur.SetPrenom(nouveauFormateur.GetPrenom());
-            formateur.SetTel(nouveauFormateur.GetTel());
-            formateur.SetSalaire(nouveauFormateur.GetSalaire());
+            try
+            {
+                _context.Formateurs.Remove(formateur);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                
+                MessageBox.Show($"Erreur lors de la suppression du formateur : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw; 
+            }
+        }
+        public void ModifierFormateur(Formateur formateur, Formateur nouveauFormateur)
+        {
+            try
+            {
+                var formateurToUpdate = _context.Formateurs.Find(formateur.idFormateur);
+                if (formateurToUpdate != null)
+                {
+                    formateurToUpdate.nom = nouveauFormateur.nom;
+                    formateurToUpdate.prenom = nouveauFormateur.prenom;
+                    formateurToUpdate.tel = nouveauFormateur.tel;
+                    formateurToUpdate.salaire = nouveauFormateur.salaire;
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                MessageBox.Show($"Erreur lors de la modification du formateur : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw; 
+            }
         }
     }
 }

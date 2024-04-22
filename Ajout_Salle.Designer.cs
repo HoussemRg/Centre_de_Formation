@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            numsalle_textbox = new TextBox();
-            label3 = new Label();
             departement_textbox = new TextBox();
             label2 = new Label();
             ajouter_salle = new Button();
@@ -41,8 +39,6 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(numsalle_textbox);
-            panel1.Controls.Add(label3);
             panel1.Controls.Add(departement_textbox);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(ajouter_salle);
@@ -51,25 +47,9 @@
             panel1.Size = new Size(364, 279);
             panel1.TabIndex = 0;
             // 
-            // numsalle_textbox
-            // 
-            numsalle_textbox.Location = new Point(22, 61);
-            numsalle_textbox.Name = "numsalle_textbox";
-            numsalle_textbox.Size = new Size(314, 27);
-            numsalle_textbox.TabIndex = 4;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(22, 24);
-            label3.Name = "label3";
-            label3.Size = new Size(63, 20);
-            label3.TabIndex = 3;
-            label3.Text = "Numero";
-            // 
             // departement_textbox
             // 
-            departement_textbox.Location = new Point(22, 142);
+            departement_textbox.Location = new Point(22, 95);
             departement_textbox.Name = "departement_textbox";
             departement_textbox.Size = new Size(314, 27);
             departement_textbox.TabIndex = 2;
@@ -77,7 +57,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(22, 110);
+            label2.Location = new Point(22, 53);
             label2.Name = "label2";
             label2.Size = new Size(97, 20);
             label2.TabIndex = 1;
@@ -140,7 +120,5 @@
         private Button ajouter_salle;
         private Label label1;
         private Button btn_ajout_salle_back;
-        private TextBox numsalle_textbox;
-        private Label label3;
     }
 }

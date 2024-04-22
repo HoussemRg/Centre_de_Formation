@@ -1,4 +1,6 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,13 +16,15 @@ namespace CentreFormation
     public partial class Ajout_Formation : Form
     {
         string selectedOption = "";
-        public Ajout_Formation()
+        private readonly CentreFormationContext _context;
+        public Ajout_Formation(CentreFormationContext context)
         {
 
             InitializeComponent();
-            foreach (Cours c in GlobalData.Cours)
+            _context = context;
+            foreach (Cours c in _context.cours)
             {
-                comboBox1.Items.Add(c.getNomCours());
+                comboBox1.Items.Add(c.nomCours);
             }
         }
 
@@ -32,34 +36,43 @@ namespace CentreFormation
 
         private void ajout_formation_btn_Click(object sender, EventArgs e)
         {
-            int idFormation = GlobalData.Formations.Count + 1;
-            string nom = nom_for_textbox.Text;
-
-            double prix = Convert.ToDouble(prix_form_textbox.Text);
-            if (selectedOption == "")
+            try
             {
-                MessageBox.Show("Veuillez choisir un cours pour cette formation");
-            }
-            else
-            {
-                Cours selectedCourse = GlobalData.Cours.FirstOrDefault(c => c.getNomCours() == selectedOption);
-                if (selectedCourse != null)
+                // Récupération des données du formulaire
+                string nom = nom_for_textbox.Text;
+                double prix = Convert.ToDouble(prix_form_textbox.Text);
+                if (selectedOption == "")
                 {
-                    Formatione f = new Formatione(idFormation, nom, prix, selectedCourse);
-                    FormationDAO formationDAO = new FormationDAO();
-                    formationDAO.ajouterFormation(f);
-                    
-                    MessageBox.Show("Formation Ajoutée avec succès");
-                    this.Hide();
-                    Formations form = new Formations();
-                    form.Show();
+                    MessageBox.Show("Veuillez choisir un cours pour cette formation");
                 }
                 else
                 {
-                    MessageBox.Show("Le cours sélectionné est introuvable.");
-                }
-            }
+                    Cours selectedCourse = _context.cours.FirstOrDefault(c => c.nomCours == selectedOption);
+                    if (selectedCourse != null)
+                    {
+                        Formatione f = new Formatione { nomFormation= nom,prixFormation= prix,cours= selectedCourse };
+                        MessageBox.Show(f.cours.nomCours);
+                        var formationDAO = new FormationDAO(_context);
+                        formationDAO.ajouterFormation(f);
+                        MessageBox.Show("Formation ajouté avec succès", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        this.Hide();
+                        Formations form = new Formations();
+                        form.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Le cours sélectionné est introuvable.");
+                    }
 
+                }
+
+                    
+            }
+            catch (Exception ex)
+            {
+                // Affichage d'un message en cas d'erreur
+                MessageBox.Show($"Erreur lors de l'ajout de la formation : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btn_back_ajout_for_Click(object sender, EventArgs e)

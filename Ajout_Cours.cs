@@ -1,4 +1,5 @@
 ﻿using CentreFormation;
+using CentreFormation.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,24 +14,34 @@ namespace Formation
 {
     public partial class Ajout_Cours : Form
     {
-        public Ajout_Cours()
+        private readonly CentreFormationContext _context;
+        public Ajout_Cours(CentreFormationContext context)
         {
             InitializeComponent();
+            _context = context;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int idCours = GlobalData.Cours.Count + 1;
-            string nom = nom_cours_textbox.Text;
+            try
+            {
+                string nom = nom_cours_textbox.Text;
+                var cours = new Cours { nomCours = nom };
+                var coursDAO = new CoursDAO(_context);
+                coursDAO.ajouterCours(cours);
+                MessageBox.Show("Cours Ajouté avec succées");
+                this.Hide();
+                ListCours cs = new ListCours();
+                cs.Show();
 
-            Cours c = new Cours(idCours, nom);
-            CoursDAO coursDAO = new CoursDAO();
-            coursDAO.ajouterCours(c);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'ajout du cours : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             
-            MessageBox.Show("Cours Ajouté avec succées");
-            this.Hide();
-            ListCours cours = new ListCours();
-            cours.Show();
+            
+            
         }
 
         private void back_ajout_cours_Click(object sender, EventArgs e)

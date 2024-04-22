@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,9 +14,19 @@ namespace CentreFormation
 {
     public partial class Participants : Form
     {
+        private readonly CentreFormationContext _context;
         public Participants()
         {
             InitializeComponent();
+            InitializeDataGridViewColumns();
+            _context = new CentreFormationContext();
+            LoadParticipantsData();
+
+            
+        }
+
+        private void InitializeDataGridViewColumns()
+        {
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "idParticipant";
             idColumn.HeaderText = "ID";
@@ -69,17 +80,23 @@ namespace CentreFormation
             payerButtonColumn.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(payerButtonColumn);
 
-            foreach (Participant participant in GlobalData.Participants)
+            
+
+        }
+
+        private void LoadParticipantsData()
+        {
+            var participants = _context.Participants.ToList();
+            foreach (var participant in participants)
             {
-                if(participant.getEtatPayment()==false)
+                if (participant.etatPayment == false)
                 {
-                    dataGridView1.Rows.Add(participant.getIdParticipant(), participant.GetNom(), participant.GetPrenom(), participant.GetTel(), "Non payé");
+                    dataGridView1.Rows.Add(participant.idParticipant, participant.nom, participant.prenom, participant.tel, "Non payé");
                 }
                 else
                 {
-                    dataGridView1.Rows.Add(participant.getIdParticipant(), participant.GetNom(), participant.GetPrenom(), participant.GetTel(), "Payé");
+                    dataGridView1.Rows.Add(participant.idParticipant, participant.nom, participant.prenom, participant.tel, "Payé");
                 }
-                
             }
         }
 
@@ -92,15 +109,14 @@ namespace CentreFormation
                 {
                     int iDParticipant = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
 
-                    foreach (Participant p in GlobalData.Participants)
+                    using (var context = new CentreFormationContext())
                     {
-                        if (p.getIdParticipant() == iDParticipant)
+                        var participantDAO = new ParticipantDAO(context);
+                        var p = context.Participants.Find(iDParticipant);
+                        if (p != null)
                         {
-                            ParticipantDAO participantDAO = new ParticipantDAO();
                             participantDAO.supprimerParticipant(p);
-                            
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
-                            break;
                         }
                     }
                 }
@@ -110,7 +126,7 @@ namespace CentreFormation
             {
                 int iDParticipant = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
                 this.Hide();
-                Modifier_Participant mf = new Modifier_Participant(iDParticipant);
+                Modifier_Participant mf = new Modifier_Participant(_context, iDParticipant);
                 mf.Show();
             }
             else if (dataGridView1.Columns[e.ColumnIndex].Name == "Payer" && dataGridView1.Rows[e.RowIndex].Cells["etat"].Value == "Non payé")
@@ -120,15 +136,14 @@ namespace CentreFormation
                 {
                     int iDParticipant = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
 
-                    foreach (Participant p in GlobalData.Participants)
+                    using (var context = new CentreFormationContext())
                     {
-                        if (p.getIdParticipant() == iDParticipant)
+                        var participantDAO = new ParticipantDAO(context);
+                        var p = context.Participants.Find(iDParticipant);
+                        if (p != null)
                         {
-                            ParticipantDAO participantDAO = new ParticipantDAO();
                             participantDAO.payerFormation(p);
                             dataGridView1.Rows[e.RowIndex].Cells["etat"].Value = "Payé";
-
-                            break;
                         }
                     }
                 }
@@ -146,7 +161,7 @@ namespace CentreFormation
         private void btn_modif_participant_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Ajout_Participant ap = new Ajout_Participant();
+            Ajout_Participant ap = new Ajout_Participant(_context);
             ap.Show();
         }
     }

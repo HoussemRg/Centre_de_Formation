@@ -1,4 +1,6 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,9 +15,20 @@ namespace CentreFormation
 {
     public partial class Salles : Form
     {
+        private readonly CentreFormationContext _context;
         public Salles()
         {
             InitializeComponent();
+            InitializeDataGridViewColumns();
+            _context = new CentreFormationContext();
+            LoadSallesData();
+
+
+            
+        }
+
+        private void InitializeDataGridViewColumns()
+        {
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "idSalle";
             idColumn.HeaderText = "ID";
@@ -30,9 +43,17 @@ namespace CentreFormation
             nomColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns.Add(nomColumn);
 
-            foreach (Salle s in GlobalData.Salles)
+            
+
+
+        }
+
+        private void LoadSallesData()
+        {
+            var salles = _context.salles.ToList();
+            foreach (var salle in salles)
             {
-                dataGridView1.Rows.Add(s.getNumSalle(), s.getDepartements());
+                dataGridView1.Rows.Add(salle.numSalle, salle.depatement);
             }
         }
 
@@ -44,7 +65,7 @@ namespace CentreFormation
         private void btn_ajout_salle_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Ajout_Salle asalle = new Ajout_Salle();
+            Ajout_Salle asalle = new Ajout_Salle(_context);
             asalle.Show();
         }
 

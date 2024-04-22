@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -17,20 +18,22 @@ namespace CentreFormation
     {
         string selectedOption = "";
         private int iDFormation;
-        public Modifier_Formation(int idFormation)
+        private readonly CentreFormationContext _context;
+        public Modifier_Formation(CentreFormationContext context,int idFormation)
         {
             InitializeComponent();
+            _context = context;
             this.iDFormation = idFormation;
-            foreach (Cours c in GlobalData.Cours)
+            foreach (Cours c in _context.cours)
             {
-                comboBox1.Items.Add(c.getNomCours());
+                comboBox1.Items.Add(c.nomCours);
             }
-            Formatione formation = GlobalData.Formations.FirstOrDefault(f => f.getIdFormation() == iDFormation);
+            Formatione formation = _context.Formations.FirstOrDefault(f => f.idFormation == iDFormation);
             if (formation != null)
             {
-                nom_for_textbox.Text = formation.getNomFormation();
-                prix_for_textbox.Text = formation.getPrixFormation().ToString();
-                comboBox1.SelectedItem = formation.getCours().getNomCours();
+                nom_for_textbox.Text = formation.nomFormation;
+                prix_for_textbox.Text = formation.prixFormation.ToString();
+                comboBox1.SelectedItem = formation.cours.nomCours;
             }
             else
             {
@@ -56,7 +59,7 @@ namespace CentreFormation
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Formatione formationRecherche = GlobalData.Formations.FirstOrDefault(f => f.getIdFormation() == this.iDFormation);
+            Formatione formationRecherche = _context.Formations.FirstOrDefault(f => f.idFormation == this.iDFormation);
 
 
 
@@ -70,12 +73,12 @@ namespace CentreFormation
                 }
                 else
                 {
-                    Cours selectedCourse = GlobalData.Cours.FirstOrDefault(c => c.getNomCours() == selectedOption);
+                    Cours selectedCourse = _context.cours.FirstOrDefault(c => c.nomCours == selectedOption);
                     if (selectedCourse != null)
                     {
                         Formatione f = new Formatione(this.iDFormation, nom, prix, selectedCourse);
-                        FormationDAO formationDAO = new FormationDAO();
-                        formationDAO.modifierFormation(formationRecherche,f);
+                        FormationDAO formationDAO = new FormationDAO(_context);
+                        formationDAO.modifierFormation(formationRecherche, f);
                         MessageBox.Show("Formation Modifié avec succès");
                         this.Hide();
                         Formations form = new Formations();

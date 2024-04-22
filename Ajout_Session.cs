@@ -1,4 +1,5 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -19,26 +20,28 @@ namespace CentreFormation
         string selectedFormateur = "";
         string selectedSalle = "";
         DateTime selectedDate;
-        public Ajout_Session()
+        private readonly CentreFormationContext _context;
+        public Ajout_Session(CentreFormationContext context)
         {
             InitializeComponent();
-            foreach (Formatione f in GlobalData.Formations)
+            _context = context;
+            foreach (Formatione f in _context.Formations)
             {
-                formation_combo.Items.Add(f.getNomFormation());
+                formation_combo.Items.Add(f.nomFormation);
             }
-            foreach (Formateur f in GlobalData.Formateurs)
+            foreach (Formateur f in _context.Formateurs)
             {
-                formateur_combo.Items.Add(f.GetNom() + " " + f.GetPrenom());
+                formateur_combo.Items.Add(f.nom + " " + f.prenom);
             }
-            foreach (Salle f in GlobalData.Salles)
+            foreach (Salle f in _context.salles)
             {
-                salle_combo.Items.Add(f.getNumSalle());
+                salle_combo.Items.Add(f.numSalle);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int idSession = GlobalData.Sessions.Count + 1;
+            
             int duree = Convert.ToInt32(duree_textbox.Text);
             if (selectedFormation == "")
             {
@@ -54,13 +57,13 @@ namespace CentreFormation
             }
             else
             {
-                Formatione formation = GlobalData.Formations.FirstOrDefault(f => f.getNomFormation() == selectedFormation);
-                Formateur formateur = GlobalData.Formateurs.FirstOrDefault(f => f.GetNom() + " " + f.GetPrenom() == selectedFormateur);
-                Salle salle = GlobalData.Salles.FirstOrDefault(s => s.getNumSalle().ToString() == selectedSalle);
+                Formatione formation = _context.Formations.FirstOrDefault(f => f.nomFormation == selectedFormation);
+                Formateur formateur = _context.Formateurs.FirstOrDefault(f => f.nom + " " + f.prenom == selectedFormateur);
+                Salle salle = _context.salles.FirstOrDefault(s => s.numSalle.ToString() == selectedSalle);
                 if (salle != null && formation != null && formateur != null)
                 {
-                    Session s = new Session(idSession, duree, salle, selectedDate, formateur, formation);
-                    SessionDAO sessionDAO = new SessionDAO();
+                    Session s = new Session { duree=duree, salle=salle,dateDebut= selectedDate,formateur= formateur,formation= formation };
+                    var sessionDAO = new SessionDAO(_context);
                     sessionDAO.creerSession(s);
 
                     MessageBox.Show("Session Ajoutée avec succès");

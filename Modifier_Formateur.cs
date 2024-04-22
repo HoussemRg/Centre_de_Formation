@@ -1,4 +1,5 @@
 ﻿using CentreFormation;
+using CentreFormation.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,20 +15,26 @@ namespace Formation
     public partial class Modifier_Formateur : Form
     {
         private int iDFormateur;
-        public Modifier_Formateur(int idFormateur)
+        private readonly CentreFormationContext _context;
+        public Modifier_Formateur(CentreFormationContext context, int idFormateur)
         {
             InitializeComponent();
+            _context = context;
             this.iDFormateur = idFormateur;
-            Formateur formateur = GlobalData.Formateurs.FirstOrDefault(f => f.GetIdFormateur() == iDFormateur);
+
+            // Recherche du formateur dans la base de données
+            var formateur = _context.Formateurs.FirstOrDefault(f => f.idFormateur == iDFormateur);
             if (formateur != null)
             {
-                mdf_for_nom.Text = formateur.GetNom();
-                mdf_for_prenom.Text = formateur.GetPrenom();
-                mdf_for_tel.Text = formateur.GetTel();
-                mdf_for_salaire.Text = formateur.GetSalaire().ToString();
+                // Remplissage des champs avec les données du formateur trouvé
+                mdf_for_nom.Text = formateur.nom;
+                mdf_for_prenom.Text = formateur.prenom;
+                mdf_for_tel.Text = formateur.tel;
+                mdf_for_salaire.Text = formateur.salaire.ToString();
             }
             else
             {
+                // Affichage d'un message d'erreur si le formateur n'est pas trouvé
                 MessageBox.Show("Formateur non trouvé");
                 this.Close();
             }
@@ -40,9 +47,7 @@ namespace Formation
 
         private void btn_modifier_formateur_Click(object sender, EventArgs e)
         {
-            Formateur formateurRecherche = GlobalData.Formateurs.FirstOrDefault(formateur => formateur.GetIdFormateur() == this.iDFormateur);
-
-
+            var formateurRecherche = _context.Formateurs.FirstOrDefault(formateur => formateur.idFormateur == this.iDFormateur);
 
             if (formateurRecherche != null)
             {
@@ -50,13 +55,14 @@ namespace Formation
                 string prenom = mdf_for_prenom.Text;
                 string tel = mdf_for_tel.Text;
                 double salaire = Convert.ToDouble(mdf_for_salaire.Text);
-                Formateur f=new Formateur(this.iDFormateur,nom, prenom,tel, salaire);
-                FormateurDAO formateurDAO = new FormateurDAO();
-                
-                formateurDAO.modifierFormateur(formateurRecherche,f);
 
+                Formateur nouveauFormateur = new Formateur(this.iDFormateur, nom, prenom, tel, salaire);
+
+                FormateurDAO formateurDAO = new FormateurDAO(_context);
+                formateurDAO.ModifierFormateur(formateurRecherche, nouveauFormateur);
 
                 MessageBox.Show("Formateur modifié avec succès");
+
                 this.Hide();
                 Formateurs form = new Formateurs();
                 form.Show();

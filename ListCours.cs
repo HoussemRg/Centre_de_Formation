@@ -1,4 +1,5 @@
 ﻿using CentreFormation;
+using CentreFormation.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,9 +14,17 @@ namespace Formation
 {
     public partial class ListCours : Form
     {
+        private readonly CentreFormationContext _context;
         public ListCours()
         {
             InitializeComponent();
+            InitializeDataGridViewColumns();
+            _context = new CentreFormationContext();
+            LoadCoursData();
+
+        }
+        private void InitializeDataGridViewColumns()
+        {
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "idCours";
             idColumn.HeaderText = "ID";
@@ -36,12 +45,16 @@ namespace Formation
             deleteButtonColumn.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(deleteButtonColumn);
 
-            foreach (Cours c in GlobalData.Cours)
+            
+        }
+        private void LoadCoursData()
+        {
+            var cours = _context.cours.ToList();
+            foreach (var cour in cours)
             {
-                dataGridView1.Rows.Add(c.getIdCours(), c.getNomCours());
+                dataGridView1.Rows.Add(cour.idCours, cour.nomCours);
             }
         }
-
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView1.Columns[e.ColumnIndex].Name == "Supprimer")
@@ -51,14 +64,14 @@ namespace Formation
                 {
                     int iDCours = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
 
-                    foreach (Cours c in GlobalData.Cours)
+                    using (var context = new CentreFormationContext())
                     {
-                        if (c.getIdCours() == iDCours)
+                        var coursDAO = new CoursDAO(context);
+                        var cours = context.cours.Find(iDCours);
+                        if (cours != null)
                         {
-                            CoursDAO coursDAO = new CoursDAO();
-                            coursDAO.ajouterCours(c);
+                            coursDAO.supprimerCours(cours);
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
-                            break;
                         }
                     }
                 }
@@ -69,7 +82,7 @@ namespace Formation
         private void btn_ajout_cours_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Ajout_Cours ac = new Ajout_Cours();
+            Ajout_Cours ac = new Ajout_Cours(_context);
             ac.Show();
         }
 

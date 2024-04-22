@@ -1,4 +1,6 @@
-﻿using Formation;
+﻿using CentreFormation.Data;
+using Formation;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,9 +15,20 @@ namespace CentreFormation
 {
     public partial class Sessions : Form
     {
+        private readonly CentreFormationContext _context;
         public Sessions()
         {
             InitializeComponent();
+            InitializeDataGridViewColumns();
+            _context = new CentreFormationContext();
+            LoadSessionsData();
+
+
+            
+        }
+
+        private void InitializeDataGridViewColumns()
+        {
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "idSession";
             idColumn.HeaderText = "ID";
@@ -72,10 +85,23 @@ namespace CentreFormation
 
             foreach (Session s in GlobalData.Sessions)
             {
-                dataGridView1.Rows.Add(s.getIdSession(), s.getDuree(), s.getFormateur().GetNom(), s.getFormation().getNomFormation(), s.getDateDebut(), s.getSalle().getNumSalle());
+                dataGridView1.Rows.Add(s.idSession, s.duree, s.formateur.nom, s.formation.nomFormation, s.dateDebut, s.salle.numSalle);
             }
+
+
         }
 
+        private void LoadSessionsData()
+        {
+           
+                var sessions = _context.sessions.ToList();
+
+                foreach (Session session in sessions)
+                {
+                    
+                    dataGridView1.Rows.Add(session.idSession, session.duree, session.formateur.nom, session.formation.nomFormation,session.dateDebut,session.salle.numSalle);
+                }
+        }
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView1.Columns[e.ColumnIndex].Name == "Supprimer")
@@ -85,15 +111,14 @@ namespace CentreFormation
                 {
                     int iDSession = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
 
-                    foreach (Session s in GlobalData.Sessions)
+                    using (var context = new CentreFormationContext())
                     {
-                        if (s.getIdSession() == iDSession)
+                        var sessionDAO = new SessionDAO(context);
+                        var session = context.sessions.Find(iDSession);
+                        if (session != null)
                         {
-                            SessionDAO sessionDAO = new SessionDAO();
-                            sessionDAO.annulerSession(s);
-                            
+                            sessionDAO.annulerSession(session);
                             dataGridView1.Rows.RemoveAt(e.RowIndex);
-                            break;
                         }
                     }
                 }
@@ -103,7 +128,7 @@ namespace CentreFormation
             {
                 int iDSession = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
                 this.Hide();
-                Modifier_Session ms = new Modifier_Session(iDSession);
+                Modifier_Session ms = new Modifier_Session(_context, iDSession);
                 ms.Show();
             }
         }
@@ -118,7 +143,7 @@ namespace CentreFormation
         private void btn_creer_session_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Ajout_Session asess = new Ajout_Session();
+            Ajout_Session asess = new Ajout_Session(_context);
             asess.Show();
         }
     }
